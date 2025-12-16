@@ -9,6 +9,10 @@ import {
   formatHex
 } from "https://cdn.skypack.dev/culori@2.0.0";
 
+const hexInput = document.getElementById("hexColor");
+const toLCH = converter("lch");
+let userBaseLCH = null;
+
 function adjustHue(val) {
   if (val < 0) val += Math.ceil(-val / 360) * 360;
 
@@ -40,14 +44,21 @@ function createScientificPalettes(baseColor) {
   return palettes;
 }
 
-function generate() {
-  // choose a random base color
-  const base = {
-    l: 50 + Math.random() * 10,
-    c: 60 + Math.random() * 10,
-    h: Math.random() * 360,
-    mode: "lch"
-  };
+function generate(baseColorOverride) {
+  // choose a random base color unless overridden by user input
+  const base =
+    baseColorOverride ??
+    {
+      l: 50 + Math.random() * 10,
+      c: 60 + Math.random() * 10,
+      h: Math.random() * 360,
+      mode: "lch"
+    };
+
+  // keep the input placeholder in sync with the active base color
+  if (hexInput) {
+    hexInput.placeholder = formatHex(base);
+  }
 
   // generate "classic" color palettes
   const palettes = createScientificPalettes(base);
@@ -85,8 +96,29 @@ function generate() {
 generate();
 
 setInterval(() => {
-  generate();
+  generate(userBaseLCH);
 }, 5000);
+
+if (hexInput) {
+  hexInput.addEventListener("input", (event) => {
+    const rawValue = event.target.value.trim();
+    const match = rawValue.match(/^#?([0-9a-fA-F]{6})$/);
+
+    if (match) {
+      const normalized = `#${match[1].toUpperCase()}`;
+      const lchColor = toLCH(normalized);
+
+      if (!lchColor) return;
+
+      userBaseLCH = { ...lchColor, mode: "lch" };
+      hexInput.value = normalized;
+      generate(userBaseLCH);
+    } else if (rawValue === "") {
+      userBaseLCH = null;
+      generate();
+    }
+  });
+}
 
 function isColorEqual(c1, c2) {
   return c1.h === c2.h && c1.l === c2.l && c1.c === c2.c;
@@ -131,8 +163,6 @@ function discoverPalettes(colors) {
 }
 
 function doWork() {
-  const toLCH = converter("lch");
-
   const baseColors = [
     "#FFB97A",
     "#FF957C",

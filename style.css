@@ -62,3 +62,38 @@ body {
   color: var(--color-1);
   font-weight: 600;
 }
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control * + * {
+  margin-top: 0;
+}
+
+.control label {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.hex-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-dark);
+  background: #fff;
+  color: inherit;
+  font-size: 1rem;
+}
+
+.hex-input:focus {
+  outline: 2px solid var(--color-1);
+  outline-offset: 2px;
+}
+
+.help {
+  color: var(--color-1);
+  font-size: 0.875rem;
+}
