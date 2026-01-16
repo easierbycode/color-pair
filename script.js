@@ -7,7 +7,7 @@ import {
   converter,
   differenceEuclidean,
   formatHex
-} from "https://cdn.skypack.dev/culori@2.0.0";
+} from "https://esm.sh/culori@2.0.0";
 
 const hexInput = document.getElementById("hexColor");
 const toLCH = converter("lch");
